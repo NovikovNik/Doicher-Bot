@@ -1,10 +1,11 @@
-from random import randrange, randint
+from random import randint
+from translator import tranlate_word
 
-def file_reader():
+def file_reader(lang):
     i = randint(10, 9730)
     """Чтение файла со списком слов и выбор случайного из них
     """
-    with open('German.txt', 'r', encoding = "ISO-8859-1") as f:
+    with open(lang, 'r', encoding = "ISO-8859-1") as f:
         for _, line in enumerate(f):
             if _ == (i):
                 _format_line(line)
@@ -20,8 +21,8 @@ def _format_line(line):
     
 
 def pretty_view_string(words):
-    print(f"The word of the day is: {words[1]}, that means: {words[0]}.")
+    print(f"The word of the day is: {words[1]}, that means: {tranlate_word(words[0])}.")
     
     
-file_reader()
+file_reader('German.txt')
     
