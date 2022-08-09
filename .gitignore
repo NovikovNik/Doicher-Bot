@@ -5,6 +5,8 @@ __pycache__/
 newenv/
 # C extensions
 *.so
+.env
+memory.db
 
 # Distribution / packaging
 .Python
