@@ -5,6 +5,7 @@ from word_generator import get_words_from_list
 import schedule
 import os
 import dotenv
+from threading import Thread
 
 
 dotenv.load_dotenv()
@@ -15,8 +16,8 @@ start_sending = False
 
 
 def start_pooling():
-    bot.infinity_polling()
-    start_sending = True
+    Thread(target=bot.infinity_polling).start()
+    Thread(target=start_job).start()
 
 
 @bot.message_handler(commands=['start'])
@@ -44,7 +45,9 @@ def send_word():
         
 
 schedule.every(1).hours.do(send_word)
-while start_sending:
-    schedule.run_pending()
-    time.sleep(1)
 
+
+def start_job():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)

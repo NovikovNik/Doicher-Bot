@@ -1,7 +1,8 @@
 from lib2to3.pytree import Base
 from models import *
 from database import *
-from bot import start_pooling
+from bot import start_job, start_pooling
+import asyncio
 
 
 if __name__ == "__main__":
