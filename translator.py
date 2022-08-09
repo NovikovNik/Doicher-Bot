@@ -1,6 +1,6 @@
-from deep_translator import PonsTranslator
+from deep_translator import PonsTranslator, GoogleTranslator
 
 
 def tranlate_word(word):
-    translated = PonsTranslator(source='english', target='russian').translate(word, return_all=False)
+    translated = GoogleTranslator(source='english', target='russian').translate(word, return_all=False)
     return translated
