@@ -7,6 +7,8 @@ newenv/
 *.so
 .env
 memory.db
+images/*
+!image.jpg
 
 # Distribution / packaging
 .Python
