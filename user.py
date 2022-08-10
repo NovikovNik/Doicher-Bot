@@ -20,6 +20,12 @@ def find_user_in_db(user_id: int) -> models.User:
     return user
 
 
+def delete_user_from_db(user_id: int) -> None:
+    db = get_db()
+    db.query(models.User).filter(models.User.name == user_id).delete()
+    db.commit()
+    db.close()
+
 def get_all_chat_ids() -> int:
     """Генератор возвращающий id чата от каждого пользователя
     """

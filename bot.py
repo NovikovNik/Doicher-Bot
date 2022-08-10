@@ -1,6 +1,6 @@
 import time
 import telebot
-from user import find_user_in_db, initial_user_create, get_all_chat_ids
+from user import delete_user_from_db, find_user_in_db, initial_user_create, get_all_chat_ids
 from word_generator import get_sentense
 import schedule
 import os
@@ -31,9 +31,9 @@ def initialising(message):
     if not user:
         bot.reply_to(message, f"Привет, {username}! Мы с тобой еще на знакомы.")
         initial_user_create(user_name=user_id, nick=username, chat_id=chat)
-        bot.send_message(chat_id=chat, text="Добавил тебя в свою базу данных!")
+        bot.send_message(chat_id=chat, text="Я Doicher. Бот, который помогает учить немецкий язык. Узнавай новые слова каждый день!")
         return
-    bot.reply_to(message, f"Привет, {username} ты уже зарегестрирован в системе! Если хочешь удалить свои данные, перейди в настройки!")
+    bot.reply_to(message, f"Привет, {username} ты уже зарегестрирован в системе! Если хочешь удалить свои данные выбери пункт 'отписаться' в меню")
     send_word_of_the_day()
     
     
@@ -48,7 +48,6 @@ def get_new_word(message):
         bot.send_message(chat_id=chat_id, text=f"{word}")
     
     
-
 def send_word_of_the_day():
     word = get_sentense('German.txt')
     img = open('images/day_word.jpg', 'rb')
@@ -56,6 +55,19 @@ def send_word_of_the_day():
         bot.send_photo(chat_id=i, photo=img)
         bot.send_message(chat_id=i, text=f"{word}")
         
+
+@bot.message_handler(commands=['stop'])
+def get_new_word(message):
+    """Отписка от сервиса.
+    """
+    user = find_user_in_db(message.from_user.id)
+    if not user:
+        bot.reply_to(message, f"Привет! Мы с тобой еще на знакомы. Напиши /start, чтобы начать погружение в мир немецкого языка.")
+        return
+    delete_user_from_db(message.from_user.id)
+    bot.reply_to(message, f"Отписка от сервиса произведена.")
+    return
+    
 
 schedule.every(1).hours.do(send_word_of_the_day)
 

@@ -1,9 +1,10 @@
 from random import randint
+from typing import Callable
 from translator import tranlate_word
 from pictures import draw_text
 
 
-def _get_words_from_list(lang):
+def _get_words_from_list(lang: str) -> str:
     i = randint(10, 9730)
     """Чтение файла со списком слов и выбор случайного из них
     """
@@ -13,7 +14,7 @@ def _get_words_from_list(lang):
                 return line
                 
 
-def _format_line(line):
+def _format_line(line: Callable[[str], list]) -> list:
     """Формиратирование полученной строки. Первое слово - английский вариант,
     второе - немецкий. Отрезается символ новой строки.
     """
@@ -22,7 +23,14 @@ def _format_line(line):
     return tmp
     
 
-def get_sentense(lang, pic=None):
+def get_sentense(lang:str, pic=None) -> str:
+    """_summary_
+        Получение готового к отправке предложения со словом и его переводом.
+    Args:
+        lang (str): языковой файл
+        pic (_type_, optional): Если не указан, создается изображение day_word.jpg, если указан, то
+        пользовательское изображение индивидуальное.
+    """
     words = _format_line(_get_words_from_list(lang))
     bottom_word = tranlate_word(words[0])
     draw_text(upper=words[1], bottom=bottom_word, user=pic)
