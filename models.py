@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Column, String, ForeignKey, Date
+from sqlalchemy import DateTime, Integer, Column, String, ForeignKey
 from database import Base
 
 
@@ -13,7 +13,7 @@ class User(Base):
 class Words(Base):
     __tablename__ = "LEARNED_WORDS"
     id = Column(Integer, primary_key = True)
-    user_id = Column(Integer, ForeignKey("USER.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("USER.name"), nullable=False)
     word = Column(String)
-    time_stamp = Column(Date)
+    time_stamp = Column(DateTime)
     

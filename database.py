@@ -8,5 +8,5 @@ session = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 
 
 def get_db():
-    ses = session
+    ses = sessionmaker(bind=engine, autocommit=False, autoflush=False)
     return ses

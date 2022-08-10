@@ -1,10 +1,11 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-
+from random import randint
 
 def draw_text(upper: str, bottom: str, user=None):
-    img = Image.open("images/image.jpg")
+    i = randint(1,3)
+    img = Image.open(f"images/image{i}.jpg")
     W, H = img.size
     draw = ImageDraw.Draw(img)
     draw_upper_text(upper, draw, W, H)
