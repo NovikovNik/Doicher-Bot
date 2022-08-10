@@ -1,6 +1,7 @@
 import time
 import telebot
 from user import delete_user_from_db, find_user_in_db, initial_user_create, get_all_chat_ids
+from utils import is_time_between
 from word_generator import get_sentense
 import schedule
 import os
@@ -49,11 +50,12 @@ def get_new_word(message):
     
     
 def send_word_of_the_day():
-    word = get_sentense('German.txt')
-    img = open('images/day_word.jpg', 'rb')
-    for i in get_all_chat_ids():
-        bot.send_photo(chat_id=i, photo=img)
-        bot.send_message(chat_id=i, text=f"{word}")
+    if is_time_between(begin_time=(10,00), end_time=(20,00)):
+        word = get_sentense('German.txt')
+        img = open('images/day_word.jpg', 'rb')
+        for i in get_all_chat_ids():
+            bot.send_photo(chat_id=i, photo=img)
+            bot.send_message(chat_id=i, text=f"{word}")
         
 
 @bot.message_handler(commands=['stop'])
@@ -69,7 +71,7 @@ def get_new_word(message):
     return
     
 
-schedule.every(1).hours.do(send_word_of_the_day)
+schedule.every(2).hours.do(send_word_of_the_day)
 
 
 def start_job():
