@@ -35,15 +35,25 @@ def delete_user_from_db(user_id: int) -> None:
         session.commit()
 
 
-def add_new_word_to_db(chat_id: int, word: str) -> None:
+# def add_new_word_to_db(chat_id: int, word: str) -> None:
+#     with db.begin() as session:
+#         name = session.query(models.User.name).filter(
+#             models.User.chat_id == chat_id).first()
+#         new_word = models.Words(
+#             user_id=name[0], word=word, time_stamp=datetime.now())
+#         session.add(new_word)
+#         session.commit()
+#         session.refresh(new_word)
+
+
+def create_word_object(chat_id, word):
+    return models.Words(user_id = chat_id, word = word, time_stamp=datetime.now())
+        
+        
+def bulk_insert_new_words_to_db(words) -> None:
     with db.begin() as session:
-        name = session.query(models.User.name).filter(
-            models.User.chat_id == chat_id).first()
-        new_word = models.Words(
-            user_id=name[0], word=word, time_stamp=datetime.now())
-        session.add(new_word)
+        session.bulk_save_objects(words)
         session.commit()
-        # session.refresh(new_word)
 
 
 def get_all_chat_ids() -> int:

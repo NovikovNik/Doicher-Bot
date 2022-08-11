@@ -10,6 +10,7 @@ memory.db
 images/*
 !image**.jpg
 !logo.png
+.DS_Store
 
 # Distribution / packaging
 .Python
