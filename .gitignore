@@ -9,6 +9,7 @@ newenv/
 memory.db
 images/*
 !image**.jpg
+logo.png
 
 # Distribution / packaging
 .Python
