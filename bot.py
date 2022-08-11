@@ -55,9 +55,10 @@ def get_new_word(message):
 def send_word_of_the_day():
     if is_time_between(begin_time=(10, 00), end_time=(20, 00)):
         word, f_word = get_sentense('German.txt')
-        img = open('images/day_word.jpg', 'rb')
         for i in get_all_chat_ids():
-            bot.send_photo(chat_id=i, photo=img)
+            print(i)
+            add_new_word_to_db(chat_id=i, word=f_word)
+            bot.send_photo(chat_id=i, photo=open('images/day_word.jpg', 'rb'))
             bot.send_message(chat_id=i, text=f"{word}")
 
 
@@ -75,7 +76,8 @@ def get_new_word(message):
     return
 
 
-schedule.every(2).hours.do(send_word_of_the_day)
+# schedule.every(2).hours.do(send_word_of_the_day)
+schedule.every(1).hours.do(send_word_of_the_day)
 
 
 def start_job():
