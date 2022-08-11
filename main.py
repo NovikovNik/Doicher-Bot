@@ -4,9 +4,8 @@ from bot import start_pooling
 
 
 if __name__ == "__main__":
-    if debug:=False == True:
-        Base.metadata.drop_all(engine) ##Убрать позже
+    if debug := False == True:
+        Base.metadata.drop_all(engine)  # Убрать позже
     Base.metadata.create_all(engine)
     database = get_db()
     start_pooling()
-    

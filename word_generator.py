@@ -9,7 +9,7 @@ def _get_words_from_list(lang: str) -> str:
         i = randint(10, 9730)
         """Чтение файла со списком слов и выбор случайного из них
         """
-        with open(lang, 'r', encoding = "ISO-8859-1") as f:
+        with open(lang, 'r', encoding="ISO-8859-1") as f:
             for _, line in enumerate(f):
                 if _ == (i):
                     return line
@@ -17,8 +17,8 @@ def _get_words_from_list(lang: str) -> str:
         print("I/O error({0}): {1}".format(e.errno, e.strerror))
     except:
         print('Unexpected Error')
-        
-        
+
+
 def _format_line(line: Callable[[str], list]) -> list:
     """Формиратирование полученной строки. Первое слово - английский вариант,
     второе - немецкий. Отрезается символ новой строки.
@@ -29,9 +29,9 @@ def _format_line(line: Callable[[str], list]) -> list:
         return tmp
     except:
         print('Ошибка форматирования')
-    
 
-def get_sentense(lang:str, pic=None) -> str:
+
+def get_sentense(lang: str, pic=None) -> str:
     """_summary_
         Получение готового к отправке предложения со словом и его переводом.
     Args:
@@ -43,5 +43,4 @@ def get_sentense(lang:str, pic=None) -> str:
     foreign_word = words[1]
     bottom_word = tranlate_word(words[0])
     draw_text(upper=words[1], bottom=bottom_word, user=pic)
-    return(f"🇩🇪 Новое слово для тебя: {words[1]}, оно означает: {tranlate_word(words[0])} 🇷🇺", foreign_word)
-
+    return (f"🇩🇪 Новое слово для тебя: {words[1]}, оно означает: {tranlate_word(words[0])} 🇷🇺", foreign_word)
