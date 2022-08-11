@@ -1,6 +1,6 @@
 import time
 import telebot
-from user import add_new_word_to_db, bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, initial_user_create, get_all_chat_ids
+from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, initial_user_create, get_all_chat_ids, add_new_word_to_db
 from utils import is_time_between
 from word_generator import get_sentense
 import schedule
