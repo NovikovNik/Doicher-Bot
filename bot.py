@@ -1,7 +1,7 @@
 import time
 import telebot
 from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, initial_user_create, get_all_chat_ids, add_new_word_to_db
-from utils import is_time_between
+from utils import check_time_for_post, is_time_between
 from word_generator import get_sentense
 import schedule
 import os
@@ -53,7 +53,7 @@ def get_new_word(message):
 
 
 def send_word_of_the_day():
-    if is_time_between(begin_time=(10, 00), end_time=(20, 00)):
+    if is_time_between(begin_time=(10, 00), end_time=(20, 00)) and check_time_for_post():
         word, f_word = get_sentense('German.txt')
         obj = []
         for i in get_all_chat_ids():
@@ -77,7 +77,7 @@ def get_new_word(message):
     return
 
 
-schedule.every(1).hours.do(send_word_of_the_day)
+schedule.every(1).minute.do(send_word_of_the_day)
 
 
 def start_job():

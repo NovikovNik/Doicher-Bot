@@ -1,5 +1,6 @@
 from datetime import datetime, time
 import pytz
+from config import hours
 
 
 def is_time_between(begin_time, end_time, check_time=None):
@@ -13,3 +14,11 @@ def is_time_between(begin_time, end_time, check_time=None):
         return check_time >= begin and check_time <= end
     else:
         return check_time >= begin or check_time <= end
+
+
+def check_time_for_post() -> None:
+    time = (lambda x=datetime.now(pytz.timezone(
+        'Europe/Moscow')).strftime('%H:%M'): x.split(':'))
+    for i in hours:
+        if time() == i:
+            return True
