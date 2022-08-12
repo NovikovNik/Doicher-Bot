@@ -1,6 +1,6 @@
 from lib2to3.pytree import Base
 from database import *
-from bot import start_pooling
+from bot_body import start_pooling
 
 
 if __name__ == "__main__":
