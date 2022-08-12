@@ -37,7 +37,6 @@ def initialising(message):
         return
     bot.reply_to(
         message, f"Привет, {username} ты уже зарегестрирован в системе! Если хочешь удалить свои данные выбери пункт 'отписаться' в меню")
-    send_word_of_the_day()
 
 
 @bot.message_handler(commands=['word'])
