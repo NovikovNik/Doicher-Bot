@@ -47,8 +47,8 @@ def get_new_word(message):
     chat_id, message_id = message.chat.id, message.id
     word, fword = get_sentense('German.txt', pic=chat_id)
     with open(f'images/pic_{chat_id}.jpg', 'rb') as f:
-        bot.send_photo(chat_id=chat_id, photo=f, caption=f'{word}', reply_markup=get_questions())
-        # bot.send_message(chat_id=chat_id, text=f"{word}")
+        bot.send_photo(chat_id=chat_id, photo=f,
+                       caption=f'{word}', reply_markup=get_questions())
         # bot.send_poll(chat_id=chat_id,question='choose one',options=['a','b','c'])
         add_new_word_to_db(chat_id=chat_id, word=fword, message_id=message_id)
 
@@ -59,8 +59,8 @@ def send_word_of_the_day():
         obj = []
         for i in get_all_chat_ids():
             obj.append(create_word_object(i, f_word))
-            bot.send_photo(chat_id=i, photo=open('images/day_word.jpg', 'rb'), caption=f"{word}")
-            # bot.send_message(chat_id=i, text=f"{word}")
+            bot.send_photo(chat_id=i, photo=open(
+                'images/day_word.jpg', 'rb'), caption=f"{word}")
         bulk_insert_new_words_to_db(obj)
 
 
@@ -80,22 +80,23 @@ def get_delete_user(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_query(call):
-    chat = call.message.chat.id
-    message_id = call.message.id
-    print(call.message.id)
+    chat, message_id = call.message.chat.id, call.message.id
     if call.data == "yes":
-        bot.send_message(chat_id=chat, text='Versuchen Sie es noch einmal, vielleicht werden Sie etwas Neues lernen 😌', reply_to_message_id=message_id)
+        bot.send_message(
+            chat_id=chat, text='Versuchen Sie es noch einmal, vielleicht werden Sie etwas Neues lernen 😌', reply_to_message_id=message_id)
         set_word_status(id=message_id, status=1)
     elif call.data == "no":
-        bot.send_message(chat_id=chat, text='Отлично. Durch Dornen zu den Sternen 🌟',reply_to_message_id=call.message.id)
+        bot.send_message(chat_id=chat, text='Отлично. Durch Dornen zu den Sternen 🌟',
+                         reply_to_message_id=call.message.id)
         set_word_status(id=message_id, status=0)
-    bot.edit_message_reply_markup(message_id=message_id, reply_markup=None, chat_id=chat)
-    
-    
-# schedule.every(1).minute.do(send_word_of_the_day)
+    bot.edit_message_reply_markup(
+        message_id=message_id, reply_markup=None, chat_id=chat)
 
 
-# def start_job():
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)
+schedule.every(1).minute.do(send_word_of_the_day)
+
+
+def start_job():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
