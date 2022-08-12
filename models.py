@@ -17,3 +17,12 @@ class Words(Base):
     user_id = Column(Integer, ForeignKey("USER.name"), nullable=False)
     word = Column(String)
     time_stamp = Column(DateTime)
+    message_id = Column(Integer)
+
+
+class WordsStatus(Base):
+    __tablename__ = "WORDS_STATUS"
+    id = Column(Integer, primary_key=True)
+    word_id = Column(Integer, ForeignKey("LEARNED_WORDS.id"), nullable=False)
+    status = Column(Integer)
+    time_stamp = Column(DateTime)

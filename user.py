@@ -15,7 +15,7 @@ def initial_user_create(user_name: str, nick: str, chat_id: id) -> None:
         add_user(new_user)
 
 
-def add_user(user):
+def add_user(user) -> None:
     with db.begin() as session:
         session.add(user)
         session.commit()
@@ -35,12 +35,12 @@ def delete_user_from_db(user_id: int) -> None:
         session.commit()
 
 
-def add_new_word_to_db(chat_id: int, word: str) -> None:
+def add_new_word_to_db(chat_id: int, word: str, message_id: int) -> None:
     with db.begin() as session:
         name = session.query(models.User.name).filter(
             models.User.chat_id == chat_id).first()
         new_word = models.Words(
-            user_id=name[0], word=word, time_stamp=datetime.now())
+            user_id=name[0], word=word, time_stamp=datetime.now(), message_id = message_id)
         session.add(new_word)
         session.commit()
         # session.refresh(new_word)
@@ -62,3 +62,19 @@ def get_all_chat_ids() -> int:
     with db.begin() as session:
         for id in session.query(models.User.chat_id).distinct():
             yield (id[0])
+
+
+def set_word_status(id, status) -> None:
+    """добавление в таблицу WORDS_STATUS. Id слова берется по id сообщения -1. Тут костыль,
+    но я пока не понял в чем дело
+    """
+    with db.begin() as session:
+        print(f"id: {id}")
+        word_id = session.query(models.Words.id).filter(
+            models.Words.message_id == id-1).first()
+        print(f"word_id: {word_id}")
+        new_status = models.WordsStatus(
+            word_id=word_id[0], status=status, time_stamp=datetime.now())
+        session.add(new_status)
+        session.commit()
+        
