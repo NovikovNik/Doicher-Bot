@@ -46,7 +46,7 @@ def add_new_word_to_db(chat_id: int, word: str, message_id: int) -> None:
         # session.refresh(new_word)
 
 
-def create_word_object(chat_id, word):
+def create_word_object(chat_id: int, word: str, message_id: int):
     return models.Words(user_id = chat_id, word = word, time_stamp=datetime.now(), message_id = message_id)
         
         
@@ -71,7 +71,7 @@ def set_word_status(id, status) -> None:
     with db.begin() as session:
         print(f"id: {id}")
         word_id = session.query(models.Words.id).filter(
-            models.Words.message_id == id-1).first()
+            models.Words.message_id == id).first()
         print(f"word_id: {word_id}")
         new_status = models.WordsStatus(
             word_id=word_id[0], status=status, time_stamp=datetime.now())

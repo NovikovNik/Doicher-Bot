@@ -33,11 +33,11 @@ def initialising(message):
             message, f"Привет, {username}! Мы с тобой еще на знакомы.")
         initial_user_create(user_name=user_id, nick=username, chat_id=chat)
         bot.send_message(
-            chat_id=chat, text="Я Doicher 🇩🇪. Бот, который помогает учить немецкий язык. Я буду отправлять тебе новые немецкие слова каждый день!")
+            chat_id=chat, text=f"Я Doicher 🇩🇪. Бот, который помогает учить немецкий язык. Я буду отправлять тебе новые немецкие слова каждый день!")
         return
     bot.reply_to(
-        message, f"Привет, {username} ты уже зарегестрирован в системе! Если хочешь удалить свои данные выбери пункт 'отписаться' в меню")
-
+        message, f"Привет, {username} ты уже зарегестрирован в системе! Если хочешь удалить свои данные выбери пункт 'Остановить рассылку' в меню")
+    send_word_of_the_day()
 
 @bot.message_handler(commands=['word'])
 def get_new_word(message):
@@ -46,10 +46,10 @@ def get_new_word(message):
     chat_id, message_id = message.chat.id, message.id
     word, fword = get_sentense('German.txt', pic=chat_id)
     with open(f'images/pic_{chat_id}.jpg', 'rb') as f:
-        bot.send_photo(chat_id=chat_id, photo=f,
+        message = bot.send_photo(chat_id=chat_id, photo=f,
                        caption=f'{word}', reply_markup=get_questions())
         # bot.send_poll(chat_id=chat_id,question='choose one',options=['a','b','c'])
-        add_new_word_to_db(chat_id=chat_id, word=fword, message_id=message_id)
+        add_new_word_to_db(chat_id=chat_id, word=fword, message_id=message.id)
 
 
 def send_word_of_the_day():
@@ -57,10 +57,9 @@ def send_word_of_the_day():
         word, f_word = get_sentense('German.txt')
         obj = []
         for i in get_all_chat_ids():
-            obj.append(create_word_object(i, f_word, 1))
             message = bot.send_photo(chat_id=i, photo=open(
                 'images/day_word.jpg', 'rb'), caption=f"{word}", reply_markup=get_questions())
-            print(message.message.id)
+            obj.append(create_word_object(i, f_word, message.id))
         bulk_insert_new_words_to_db(obj)
 
 
