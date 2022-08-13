@@ -1,4 +1,5 @@
 from datetime import datetime
+from statistics import mode
 import pytz
 from database import get_db
 import models
@@ -40,16 +41,16 @@ def add_new_word_to_db(chat_id: int, word: str, message_id: int) -> None:
         name = session.query(models.User.name).filter(
             models.User.chat_id == chat_id).first()
         new_word = models.Words(
-            user_id=name[0], word=word, time_stamp=datetime.now(), message_id = message_id)
+            user_id=name[0], word=word, time_stamp=datetime.now(), message_id=message_id)
         session.add(new_word)
         session.commit()
         # session.refresh(new_word)
 
 
 def create_word_object(chat_id: int, word: str, message_id: int):
-    return models.Words(user_id = chat_id, word = word, time_stamp=datetime.now(), message_id = message_id)
-        
-        
+    return models.Words(user_id=chat_id, word=word, time_stamp=datetime.now(), message_id=message_id)
+
+
 def bulk_insert_new_words_to_db(words) -> None:
     with db.begin() as session:
         session.bulk_save_objects(words)
@@ -77,4 +78,18 @@ def set_word_status(id, status) -> None:
             word_id=word_id[0], status=status, time_stamp=datetime.now())
         session.add(new_status)
         session.commit()
-        
+
+
+def get_user_stats(user_id: int) -> dict:
+    with db.begin() as session:
+        result = {'all_words': session.query(models.Words).filter(models.Words.user_id == user_id).count(),
+                  'know_words': session.query(models.Words, models.WordsStatus)
+                  .filter(models.Words.user_id == user_id)
+                  .filter(models.WordsStatus.status == 1)
+                  .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
+                  'unknow_words': session.query(models.Words, models.WordsStatus)
+                  .filter(models.Words.user_id == user_id)
+                  .filter(models.WordsStatus.status == 0)
+                  .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
+                  'since': str(session.query(models.User.first_authorization).filter(models.User.name == user_id).first()).strip("('").split(' ')[0]}
+        return result

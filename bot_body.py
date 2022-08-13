@@ -1,6 +1,7 @@
+from email import message
 import time
 import telebot
-from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, initial_user_create, get_all_chat_ids, add_new_word_to_db, set_word_status
+from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, get_user_stats, initial_user_create, get_all_chat_ids, add_new_word_to_db, set_word_status
 from utils import check_time_for_post, is_time_between
 from word_generator import get_sentense
 import schedule
@@ -90,6 +91,19 @@ def callback_query(call):
         set_word_status(id=message_id, status=0)
     bot.edit_message_reply_markup(
         message_id=message_id, reply_markup=None, chat_id=chat)
+    
+
+@bot.message_handler(commands=['stat', 'stats', 'statistics'])
+def stats(message):
+    if find_user_in_db(message.from_user.id):
+        stat = get_user_stats(message.from_user.id)
+        bot.send_message(
+            chat_id=message.chat.id, text=f"""Вот твоя статистика за всё время 😺: \n
+Всего слов получено: {stat.get('all_words')}\n
+Из них:
+Известных тебе: {stat.get('know_words')}
+Неизвестных: {stat.get('unknow_words')}\n
+Ты подписчик с: {stat.get('since')} ❤️""")
 
 
 schedule.every(1).minute.do(send_word_of_the_day)
