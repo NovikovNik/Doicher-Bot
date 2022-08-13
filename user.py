@@ -47,7 +47,7 @@ def add_new_word_to_db(chat_id: int, word: str, message_id: int) -> None:
 
 
 def create_word_object(chat_id, word):
-    return models.Words(user_id = chat_id, word = word, time_stamp=datetime.now())
+    return models.Words(user_id = chat_id, word = word, time_stamp=datetime.now(), message_id = message_id)
         
         
 def bulk_insert_new_words_to_db(words) -> None:

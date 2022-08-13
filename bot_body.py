@@ -57,9 +57,10 @@ def send_word_of_the_day():
         word, f_word = get_sentense('German.txt')
         obj = []
         for i in get_all_chat_ids():
-            obj.append(create_word_object(i, f_word))
-            bot.send_photo(chat_id=i, photo=open(
-                'images/day_word.jpg', 'rb'), caption=f"{word}")
+            obj.append(create_word_object(i, f_word, 1))
+            message = bot.send_photo(chat_id=i, photo=open(
+                'images/day_word.jpg', 'rb'), caption=f"{word}", reply_markup=get_questions())
+            print(message.message.id)
         bulk_insert_new_words_to_db(obj)
 
 
