@@ -1,6 +1,4 @@
-from datetime import datetime
-from statistics import mode
-import pytz
+from datetime import datetime, timedelta
 from database import get_db
 import models
 
@@ -66,9 +64,7 @@ def get_all_chat_ids() -> int:
 
 
 def set_word_status(id, status) -> None:
-    """добавление в таблицу WORDS_STATUS. Id слова берется по id сообщения -1. Тут костыль,
-    но я пока не понял в чем дело
-    """
+    """добавление в таблицу WORDS_STATUS """
     with db.begin() as session:
         print(f"id: {id}")
         word_id = session.query(models.Words.id).filter(
@@ -80,16 +76,35 @@ def set_word_status(id, status) -> None:
         session.commit()
 
 
-def get_user_stats(user_id: int) -> dict:
+def get_user_stats(user_id: int, week=False) -> dict:
     with db.begin() as session:
-        result = {'all_words': session.query(models.Words).filter(models.Words.user_id == user_id).count(),
-                  'know_words': session.query(models.Words, models.WordsStatus)
-                  .filter(models.Words.user_id == user_id)
-                  .filter(models.WordsStatus.status == 1)
-                  .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
-                  'unknow_words': session.query(models.Words, models.WordsStatus)
-                  .filter(models.Words.user_id == user_id)
-                  .filter(models.WordsStatus.status == 0)
-                  .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
-                  'since': str(session.query(models.User.first_authorization).filter(models.User.name == user_id).first()).strip("('").split(' ')[0]}
+        if week == False:
+            result = {'all_words': session.query(models.Words).filter(models.Words.user_id == user_id).count(),
+                      'know_words': session.query(models.Words, models.WordsStatus)
+                      .filter(models.Words.user_id == user_id)
+                      .filter(models.WordsStatus.status == 1)
+                      .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
+                      'unknow_words': session.query(models.Words, models.WordsStatus)
+                      .filter(models.Words.user_id == user_id)
+                      .filter(models.WordsStatus.status == 0)
+                      .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
+                      'since': str(session.query(models.User.first_authorization)
+                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0]}
+        else:
+            result = {'all_words': session.query(models.Words)
+                      .filter(models.Words.user_id == user_id)
+                      .filter(models.Words.time_stamp >= (datetime.now() - timedelta(weeks=1))).count(),
+                      'know_words': session.query(models.Words, models.WordsStatus)
+                      .filter(models.Words.user_id == user_id)
+                      .filter(models.Words.time_stamp >= (datetime.now() - timedelta(weeks=1)))
+                      .filter(models.WordsStatus.status == 1)
+                      .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
+                      'unknow_words': session.query(models.Words, models.WordsStatus)
+                      .filter(models.Words.user_id == user_id)
+                      .filter(models.Words.time_stamp >= (datetime.now() - timedelta(weeks=1)))
+                      .filter(models.WordsStatus.status == 0)
+                      .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
+                      'since': str(session.query(models.User.first_authorization)
+                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0]}
+            
         return result

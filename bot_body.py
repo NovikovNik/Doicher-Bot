@@ -96,7 +96,7 @@ def callback_query(call):
 @bot.message_handler(commands=['stat', 'stats', 'statistics'])
 def stats(message):
     if find_user_in_db(message.from_user.id):
-        stat = get_user_stats(message.from_user.id)
+        stat = get_user_stats(message.from_user.id, week=True)
         bot.send_message(
             chat_id=message.chat.id, text=f"""Вот твоя статистика за всё время 😺: \n
 Всего слов получено: {stat.get('all_words')}\n
