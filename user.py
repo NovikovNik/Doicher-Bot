@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from database import get_db
 import models
+import re
 
 db = get_db()
 
@@ -88,8 +89,8 @@ def get_user_stats(user_id: int, week=False) -> dict:
                       .filter(models.Words.user_id == user_id)
                       .filter(models.WordsStatus.status == 0)
                       .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
-                      'since': str(session.query(models.User.first_authorization)
-                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0]}
+                      'since': re.escape(str(session.query(models.User.first_authorization)
+                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0])}
         else:
             result = {'all_words': session.query(models.Words)
                       .filter(models.Words.user_id == user_id)
@@ -104,7 +105,7 @@ def get_user_stats(user_id: int, week=False) -> dict:
                       .filter(models.Words.time_stamp >= (datetime.now() - timedelta(weeks=1)))
                       .filter(models.WordsStatus.status == 0)
                       .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
-                      'since': str(session.query(models.User.first_authorization)
-                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0]}
+                      'since': re.escape(str(session.query(models.User.first_authorization)
+                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0])}
             
         return result

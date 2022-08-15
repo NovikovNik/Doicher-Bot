@@ -2,6 +2,7 @@ from random import randint
 from typing import Callable
 from translator import tranlate_word
 from pictures import draw_text
+import re
 
 
 def _get_words_from_list(lang: str) -> str:
@@ -43,4 +44,4 @@ def get_sentense(lang: str, pic=None) -> str:
     foreign_word = words[1]
     bottom_word = tranlate_word(words[0])
     draw_text(upper=words[1], bottom=bottom_word, user=pic)
-    return (f"🇩🇪 Новое слово для тебя: {words[1]}, оно означает: {tranlate_word(words[0])} 🇷🇺", foreign_word)
+    return (f"🇩🇪 Новое слово для тебя: *{re.escape(words[1])}*, оно означает: *{tranlate_word(words[0])}* 🇷🇺", foreign_word)
