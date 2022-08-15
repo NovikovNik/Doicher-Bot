@@ -107,3 +107,14 @@ ____
 cd Doicher-Bot &&
 docker build --tag doicher-bot .
 ```
+
+Также можно запустить через docker-compose (3.3). В таком случае база данных прикрепляется как отдельный volume.
+```
+volumes:
+    - /home/nick/media-server/database:/app/database/
+```
+
+Запуск осуществляется через:
+```
+docker-compose up -d
+```
