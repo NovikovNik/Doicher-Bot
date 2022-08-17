@@ -39,7 +39,8 @@ def generate_graph():
     result = _get_count(tmp)
     ax = plt.subplot()
     x, y = zip(*sorted(result.items()))
-    line1 = ax.plot(x, y, label="Реакции общие")
+    ax.plot(x, y, label="Реакции общие")
+    ax.plot(x, y, label="Реакции общие")
     ax.set_xlabel("7 прошедших дней")
     ax.set_ylabel("Количество реакций")
     ax.set_title(
