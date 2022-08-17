@@ -1,10 +1,9 @@
-from typing import Dict
 import models
 from database import get_db
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from sqlalchemy import or_
-from dataclasses import dataclass
+from user import Data
 
 db = get_db()
 
@@ -22,14 +21,8 @@ def _get_stats_for_seven_day():
                 }
         return data
 
-@dataclass
-class Data():
-    know_words = 'know_words'
-    unknown_words = 'unknow_words'
-    all_words = 'all_words'
-    
 
-def _get_count(stats, source: Data) -> Dict:
+def _get_count(stats, source: Data) -> dict:
     data = {}
     for i in stats.get(source):
         for j in i:
@@ -54,4 +47,3 @@ def generate_graph():
     ax.set_title(
         f"Реакции на слова за прошедшие 7 дней (c {(datetime.now() - timedelta(weeks=1))})")
     plt.savefig('images/graph.png')
-    

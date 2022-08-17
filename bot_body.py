@@ -1,6 +1,7 @@
+from datetime import datetime
 import time
 import telebot
-from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, get_user_stats, initial_user_create, get_all_chat_ids, add_new_word_to_db, set_word_status
+from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, get_user_stats, initial_user_create, get_all_chat_ids, add_new_word_to_db, set_word_status, Data
 from utils import check_time_for_post, is_time_between
 from word_generator import get_sentense
 import schedule
@@ -64,6 +65,20 @@ def send_word_of_the_day():
         bulk_insert_new_words_to_db(obj)
 
 
+def send_statistic():
+    if datetime.today().weekday() == 4: ##Пятница
+        for i in get_all_chat_ids():
+            stat = get_user_stats(user_id=i, week=True)
+            bot.send_photo(
+                chat_id=i, photo=open(
+                    'images/logo.png', 'rb'), caption=f"""Я собрал для тебя некоторую статистику за прошедшие 7 дней с {stat.get(Data.last_week)} 😺: \n
+        Cлов получено: *{stat.get(Data.all_words)}*\n
+        Из них:
+        Известных тебе: *{stat.get(Data.know_words)}*
+        Неизвестных: *{stat.get(Data.unknown_words)}*\n
+        Ты подписчик с: *{stat.get(Data.since)}* ❤️""", parse_mode='MarkdownV2')
+
+
 @bot.message_handler(commands=['stop'])
 def get_delete_user(message):
     """Отписка от сервиса.
@@ -97,16 +112,18 @@ def callback_query(call):
 def stats(message):
     if find_user_in_db(message.from_user.id):
         stat = get_user_stats(message.from_user.id, week=True)
-        bot.send_message(
-            chat_id=message.chat.id, text=f"""Я собрал для тебя некоторую статистику 😺: \n
-Cлов получено: *{stat.get('all_words')}*\n
+        bot.send_photo(
+            chat_id=message.chat.id, photo=open(
+                'images/logo.png', 'rb'), caption=f"""Я собрал для тебя некоторую статистику за прошедшие 7 дней с {stat.get(Data.last_week)} 😺: \n
+Cлов получено: *{stat.get(Data.all_words)}*\n
 Из них:
-Известных тебе: *{stat.get('know_words')}*
-Неизвестных: *{stat.get('unknow_words')}*\n
-Ты подписчик с: *{stat.get('since')}* ❤️""", parse_mode='MarkdownV2')
+Известных тебе: *{stat.get(Data.know_words)}*
+Неизвестных: *{stat.get(Data.unknown_words)}*\n
+Ты подписчик с: *{stat.get(Data.since)}* ❤️""", parse_mode='MarkdownV2')
 
 
 schedule.every(1).minute.do(send_word_of_the_day)
+schedule.every().day.at("09:30").do(send_statistic)
 
 
 def start_job():
