@@ -1,12 +1,12 @@
 version: "3.3"
 services:
-  doicher-bot:
+  doicher:
     build: .
     volumes:
         - /home/nick/media-server/database:/app/database/
 
   grafana:
-      image: grafana
+      image: grafana/grafana
       ports:
         - 3000:3000
       user: '104'
