@@ -9,11 +9,20 @@ import os
 import dotenv
 from threading import Thread
 from repo.bot_repo import get_questions
+import logging
 
 
 dotenv.load_dotenv()
 token = os.environ.get('TOKEN')
 bot = telebot.TeleBot(token)
+
+
+logging.basicConfig(filename='log',
+                    filemode='a', 
+                    level=logging.INFO, 
+                    format='%(asctime)s %(name)s %(levelname)s:%(message)s')
+logging.getLogger('sqlalchemy').setLevel(logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 def start_pooling():
@@ -35,6 +44,7 @@ def initialising(message):
         initial_user_create(user_name=user_id, nick=username, chat_id=chat)
         bot.send_message(
             chat_id=chat, text=f"Я Doicher 🇩🇪. Бот, который помогает учить немецкий язык. Я буду отправлять тебе новые немецкие слова каждый день!")
+        logger.info("New user")
         return
     bot.reply_to(
         message, f"Привет, {username} ты уже зарегестрирован в системе! Если хочешь удалить свои данные выбери пункт 'Остановить рассылку' в меню")
@@ -52,6 +62,7 @@ def get_new_word(message):
                                  caption=f'{word}', reply_markup=get_questions(), parse_mode='MarkdownV2')
         # bot.send_poll(chat_id=chat_id,question='choose one',options=['a','b','c'])
         add_new_word_to_db(chat_id=chat_id, word=fword, message_id=message.id)
+        logger.info("User get new word")
 
 
 def send_word_of_the_day():
@@ -62,11 +73,12 @@ def send_word_of_the_day():
             message = bot.send_photo(chat_id=i, photo=open(
                 'images/day_word.jpg', 'rb'), caption=f"{word}", reply_markup=get_questions(), parse_mode='MarkdownV2')
             obj.append(create_word_object(i, f_word, message.id))
+            logger.info("User get new word")
         bulk_insert_new_words_to_db(obj)
 
 
 def send_statistic():
-    if datetime.today().weekday() == 4: ##Пятница
+    if datetime.today().weekday() == 4:  # Пятница
         for i in get_all_chat_ids():
             stat = get_user_stats(user_id=i, week=True)
             bot.send_photo(

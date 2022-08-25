@@ -12,6 +12,7 @@ images/*
 !logo.png
 !graph_ex.png
 .DS_Store
+log
 
 # Distribution / packaging
 .Python

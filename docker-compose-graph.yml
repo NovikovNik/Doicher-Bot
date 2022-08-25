@@ -1,0 +1,31 @@
+version: "3.3"
+services:
+  doicher-bot:
+    build: .
+    volumes:
+        - /home/nick/media-server/database:/app/database/
+
+  grafana:
+      image: grafana
+      ports:
+        - 3000:3000
+      user: '104'
+
+  prom:
+      image: prom/pushgateway:latest
+      ports:
+        - 9091:9091
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./configs:/etc/prometheus/
+    container_name: prometheus
+    hostname: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    environment:
+      TZ: "Europe/Moscow"
