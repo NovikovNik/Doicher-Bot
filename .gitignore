@@ -6,13 +6,13 @@ newenv/
 # C extensions
 *.so
 .env
-memory.db
 images/*
 !image**.jpg
 !logo.png
 !graph_ex.png
 .DS_Store
 log
+database2
 
 # Distribution / packaging
 .Python
