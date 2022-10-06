@@ -1,7 +1,7 @@
 from datetime import datetime
 import time
 import telebot
-from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, get_user_stats, initial_user_create, get_all_chat_ids, add_new_word_to_db, set_word_status, Data
+from user import bulk_insert_new_words_to_db, create_word_object, delete_user_from_db, find_user_in_db, get_user_stats, get_words_amount, initial_user_create, get_all_chat_ids, add_new_word_to_db, set_word_status, Data
 from utils import check_time_for_post, is_time_between
 from word_generator import get_sentense
 import schedule
@@ -10,6 +10,8 @@ import dotenv
 from threading import Thread
 from repo.bot_repo import get_questions
 import logging
+import config
+from prometheus_client import CollectorRegistry, Gauge, push_to_gateway, Counter, Info
 
 
 dotenv.load_dotenv()
@@ -63,6 +65,12 @@ def get_new_word(message):
         # bot.send_poll(chat_id=chat_id,question='choose one',options=['a','b','c'])
         add_new_word_to_db(chat_id=chat_id, word=fword, message_id=message.id)
         logger.info("User get new word")
+        config.words_per_session= config.words_per_session+1
+        print(config.words_per_session)
+        registry = CollectorRegistry()
+        g = Counter('words_count_job', 'User successfully get new word', registry=registry)
+        g.inc(int(get_words_amount()))
+        push_to_gateway('prom:9091', job='doicher', registry=registry)
 
 
 def send_word_of_the_day():
@@ -74,6 +82,10 @@ def send_word_of_the_day():
                 'images/day_word.jpg', 'rb'), caption=f"{word}", reply_markup=get_questions(), parse_mode='MarkdownV2')
             obj.append(create_word_object(i, f_word, message.id))
             logger.info("User get new word")
+            # registry = CollectorRegistry()
+            # g = Gauge('day_send_word', 'User successfully get new word', registry=registry)
+            # g.inc(1)
+        # push_to_gateway('prom:9091', job='doicher', registry=registry)
         bulk_insert_new_words_to_db(obj)
 
 
@@ -112,10 +124,18 @@ def callback_query(call):
         bot.send_message(
             chat_id=chat, text='Versuchen Sie es noch einmal, vielleicht werden Sie etwas Neues lernen 😌', reply_to_message_id=message_id)
         set_word_status(id=message_id, status=1)
+        # registry = CollectorRegistry()
+        # g = Gauge('known_job', 'User dosnt know word', registry=registry)
+        # g.inc(1)
+        # push_to_gateway('prom:9091', job='doicher', registry=registry)
     elif call.data == "no":
         bot.send_message(chat_id=chat, text='Отлично. Durch Dornen zu den Sternen 🌟',
                          reply_to_message_id=call.message.id)
         set_word_status(id=message_id, status=0)
+        registry = CollectorRegistry()
+        # g = Gauge('not_known_job', 'User dosnt know word', registry=registry)
+        # g.inc(1)
+        # push_to_gateway('prom:9091', job='doicher', registry=registry)
     bot.edit_message_reply_markup(
         message_id=message_id, reply_markup=None, chat_id=chat)
 

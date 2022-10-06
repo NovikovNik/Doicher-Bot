@@ -87,37 +87,48 @@ class Data():
     last_week = 'last_week'
 
 
+def get_words_amount() -> str:
+    with db.begin() as session:
+        result = str(session.query(models.Words).count())
+        return result
+
+
 def get_user_stats(user_id: int, week=False) -> dict:
     with db.begin() as session:
         if week == False:
             result = {Data.all_words: session.query(models.Words).filter(models.Words.user_id == user_id).count(),
-                      Data.know_words: session.query(models.Words, models.WordsStatus)
+                      Data.know_words: session.query(
+                          models.Words, models.WordsStatus)
                       .filter(models.Words.user_id == user_id)
                       .filter(models.WordsStatus.status == 1)
                       .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
-                      Data.unknown_words: session.query(models.Words, models.WordsStatus)
+                      Data.unknown_words: session.query(
+                          models.Words, models.WordsStatus)
                       .filter(models.Words.user_id == user_id)
                       .filter(models.WordsStatus.status == 0)
                       .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
                       Data.since: re.escape(str(session.query(models.User.first_authorization)
-                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0])}
+                                                .filter(models.User.name == user_id).first()).strip("('").split(' ')[0])}
         else:
             result = {Data.all_words: session.query(models.Words)
                       .filter(models.Words.user_id == user_id)
                       .filter(models.Words.time_stamp >= (datetime.now() - timedelta(weeks=1))).count(),
-                      Data.know_words: session.query(models.Words, models.WordsStatus)
+                      Data.know_words: session.query(
+                          models.Words, models.WordsStatus)
                       .filter(models.Words.user_id == user_id)
                       .filter(models.Words.time_stamp >= (datetime.now() - timedelta(weeks=1)))
                       .filter(models.WordsStatus.status == 1)
                       .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
-                      Data.unknown_words: session.query(models.Words, models.WordsStatus)
+                      Data.unknown_words: session.query(
+                          models.Words, models.WordsStatus)
                       .filter(models.Words.user_id == user_id)
                       .filter(models.Words.time_stamp >= (datetime.now() - timedelta(weeks=1)))
                       .filter(models.WordsStatus.status == 0)
                       .filter(models.WordsStatus.word_id == models.Words.id).distinct().count(),
                       Data.since: re.escape(str(session.query(models.User.first_authorization)
-                                   .filter(models.User.name == user_id).first()).strip("('").split(' ')[0]),
-                      Data.last_week: re.escape((datetime.now() - timedelta(weeks=1)).strftime("%Y-%d-%m"))
+                                                .filter(models.User.name == user_id).first()).strip("('").split(' ')[0]),
+                      Data.last_week: re.escape(
+                          (datetime.now() - timedelta(weeks=1)).strftime("%Y-%d-%m"))
                       }
-            
+
         return result
