@@ -65,8 +65,8 @@ def get_new_word(message):
         # bot.send_poll(chat_id=chat_id,question='choose one',options=['a','b','c'])
         add_new_word_to_db(chat_id=chat_id, word=fword, message_id=message.id)
         logger.info("User get new word")
-        config.words_per_session= config.words_per_session+1
-        print(config.words_per_session)
+        # config.words_per_session= config.words_per_session+1
+        # print(config.words_per_session)
         registry = CollectorRegistry()
         g = Counter('words_count_job', 'User successfully get new word', registry=registry)
         g.inc(int(get_words_amount()))
